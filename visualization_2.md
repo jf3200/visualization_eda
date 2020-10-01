@@ -392,4 +392,75 @@ weather_df %>%
 
 ![](visualization_2_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
-## Use Pulse data
+## Revisit old data
+
+Data from FAS Study
+
+``` r
+pup_df = 
+  read_csv("./data/FAS_pups.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(sex = recode(sex, `1` = "male", `2` = "female"))
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   `Litter Number` = col_character(),
+    ##   Sex = col_double(),
+    ##   `PD ears` = col_double(),
+    ##   `PD eyes` = col_double(),
+    ##   `PD pivot` = col_double(),
+    ##   `PD walk` = col_double()
+    ## )
+
+``` r
+litters_df =
+  read_csv("./data/FAS_litters.csv") %>%
+  janitor::clean_names() %>%
+  separate(group, into = c("dose", "day_of_trt"), sep = 3)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   Group = col_character(),
+    ##   `Litter Number` = col_character(),
+    ##   `GD0 weight` = col_double(),
+    ##   `GD18 weight` = col_double(),
+    ##   `GD of Birth` = col_double(),
+    ##   `Pups born alive` = col_double(),
+    ##   `Pups dead @ birth` = col_double(),
+    ##   `Pups survive` = col_double()
+    ## )
+
+``` r
+fas_df =
+  left_join(pup_df, litters_df, by = "litter_number")
+
+
+fas_df %>% 
+  ggplot(aes(x = dose, y = pd_ears)) + 
+  geom_violin() + 
+  facet_grid(.~day_of_trt)
+```
+
+    ## Warning: Removed 18 rows containing non-finite values (stat_ydensity).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+Manipulate data using `pivot_longer`
+
+``` r
+fas_df %>% 
+  select(dose, day_of_trt, starts_with("pd_")) %>% 
+  pivot_longer(
+    pd_ears:pd_walk,
+    names_to = "outcome", 
+    values_to = "pn_day") %>% 
+  drop_na() %>% 
+  mutate(outcome = forcats::fct_reorder(outcome, pn_day, median)) %>% 
+  ggplot(aes(x = dose, y = pn_day)) + 
+  geom_violin() + 
+  facet_grid(day_of_trt ~ outcome)
+```
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
