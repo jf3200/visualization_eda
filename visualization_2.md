@@ -332,3 +332,64 @@ tmax_date_p =
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
 ![](visualization_2_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+## Data Manipulation
+
+Re-order factors
+
+``` r
+## usually goes in alphabetical order, but you can change this
+
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) + 
+  geom_violin(alpha = .5)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+## Use data manipulation before ggplot
+
+weather_df %>%
+  mutate(name = forcats::fct_relevel(name, c("Waikiki_HA"))) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+
+``` r
+weather_df %>%
+  mutate(name = forcats::fct_reorder(name, tmax)) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-14-3.png)<!-- -->
+
+Can I have tmin and tmax densities together?
+
+``` r
+weather_df %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation", 
+    values_to = "temp") %>% 
+    ggplot(aes(x = temp, fill = observation)) +
+  geom_density(alpha = .5) +
+  facet_grid(~name)  
+```
+
+    ## Warning: Removed 18 rows containing non-finite values (stat_density).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+## Use Pulse data
