@@ -1,6 +1,6 @@
 ---
 title: "Visualization 2"
-author: "Jessica Flynn"
+author: "Jessica Flynn"  
 date: "9/30/2020"
 output: github_document
 ---
@@ -32,4 +32,25 @@ weather_df =
 weather_df
 ```
 
+## Remember this plot
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5)
+```
+
+Add in text/labels
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  )
+```
 
