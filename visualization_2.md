@@ -76,7 +76,7 @@ weather_df %>%
 
 ![](visualization_2_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-Add in text/labels
+## Add in text/labels
 
 ``` r
 weather_df %>% 
@@ -93,3 +93,71 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](visualization_2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+## Scales
+
+Start with the same plot and add scales ; x and y scales
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package") + 
+  scale_x_continuous(
+    breaks = c(-15, 0, 15), 
+    labels = c("-15º C", "0", "15"), 
+    limits = c(-20, 30)) + 
+  scale_y_continuous(
+    trans = "sqrt", 
+  )
+```
+
+    ## Warning in self$trans$transform(x): NaNs produced
+
+    ## Warning: Transformation introduced infinite values in continuous y-axis
+
+    ## Warning: Removed 90 rows containing missing values (geom_point).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Look at color scales
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package") + 
+  scale_color_hue(name = "Location", 
+                  h = c(100, 300))
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  ) + 
+  viridis::scale_color_viridis(
+    name = "Location", 
+    discrete = TRUE)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](visualization_2_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->

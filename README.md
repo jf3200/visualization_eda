@@ -1,3 +1,3 @@
 # visualization_eda
 
-Examples from Visualization 1 lecture 
+Examples from Visualization and eda lectures
