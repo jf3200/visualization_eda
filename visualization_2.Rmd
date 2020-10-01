@@ -224,5 +224,33 @@ ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) +
 
 ```
 
+## patchwork
+
+what happens when you want multi-panel plots but cant facet?
+
+```{r}
+tmax_tmin_p = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  theme(legend.position = "none")
+
+prcp_dens_p = 
+  weather_df %>% 
+  filter(prcp > 0) %>%  ## did this because many days have prcp = 0
+  ggplot(aes(x = prcp, fill = name)) + 
+  geom_density(alpha = .5) + 
+  theme(legend.position = "none")
+
+tmax_date_p = 
+  weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  theme(legend.position = "none")
+
+(tmax_tmin_p + prcp_dens_p) / tmax_date_p
+
+```
 
 
