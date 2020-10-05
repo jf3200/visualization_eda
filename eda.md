@@ -254,3 +254,104 @@ weather_df %>%
 ``` r
 #best way to make a 2x2 because returns a df
 ```
+
+## General Summaries
+
+``` r
+weather_df %>%
+  group_by(month) %>%
+  summarize(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    mean_prec = mean(prcp, na.rm = TRUE),
+    median_tmin = median(tmin, na.rm = TRUE),
+    sd_tmax = sd(tmax))
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 12 x 5
+    ##    month      mean_tmax mean_prec median_tmin sd_tmax
+    ##    <date>         <dbl>     <dbl>       <dbl>   <dbl>
+    ##  1 2017-01-01      10.8     37.0          1.7   13.1 
+    ##  2 2017-02-01      12.2     57.9          1.7   12.1 
+    ##  3 2017-03-01      13.0     54.6          1.1   12.4 
+    ##  4 2017-04-01      17.3     32.9          8.9   11.2 
+    ##  5 2017-05-01      19.9     28.4         11.7   NA   
+    ##  6 2017-06-01      23.5     18.7         18.9    8.73
+    ##  7 2017-07-01      25.5     12.7         20.8   NA   
+    ##  8 2017-08-01      26.3     10.2         20      5.87
+    ##  9 2017-09-01      23.8      9.94        16.1    8.42
+    ## 10 2017-10-01      20.1     41.5         12.8    9.75
+    ## 11 2017-11-01      14.0     61.5          3.9   11.6 
+    ## 12 2017-12-01      11.0     40.2          1.6   11.9
+
+Group by more than 1 variable and you can add plots too\!
+
+``` r
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(mean_tmax = mean(tmax, na.rm = TRUE)) %>%
+  ggplot(aes(x = month, y = mean_tmax, color = name)) +
+  geom_point() + 
+  geom_line()
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+<img src="eda_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
+
+Suppose you want to summarize many columns in the same way
+
+``` r
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(across(tmin:prcp, mean))
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## # A tibble: 36 x 5
+    ## # Groups:   name [3]
+    ##    name           month        tmin  tmax  prcp
+    ##    <chr>          <date>      <dbl> <dbl> <dbl>
+    ##  1 CentralPark_NY 2017-01-01  0.748  5.98  39.5
+    ##  2 CentralPark_NY 2017-02-01  1.45   9.28  22.5
+    ##  3 CentralPark_NY 2017-03-01 -0.177  8.22  43.0
+    ##  4 CentralPark_NY 2017-04-01  9.66  18.3   32.5
+    ##  5 CentralPark_NY 2017-05-01 12.2   20.1   52.3
+    ##  6 CentralPark_NY 2017-06-01 18.2   26.3   40.4
+    ##  7 CentralPark_NY 2017-07-01 21.0   28.7   34.3
+    ##  8 CentralPark_NY 2017-08-01 19.5   27.2   27.4
+    ##  9 CentralPark_NY 2017-09-01 17.4   25.4   17.0
+    ## 10 CentralPark_NY 2017-10-01 13.9   21.8   34.3
+    ## # ... with 26 more rows
+
+Remember: sometimes your data are easier to read in another format
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(mean_tmax = mean(tmax)) %>% 
+  pivot_wider(
+    names_from = name, 
+    values_from = mean_tmax
+  )  %>% 
+  knitr::kable(digits = 1)
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+| month      | CentralPark\_NY | Waikiki\_HA | Waterhole\_WA |
+| :--------- | --------------: | ----------: | ------------: |
+| 2017-01-01 |             6.0 |        27.8 |         \-1.4 |
+| 2017-02-01 |             9.3 |        27.2 |           0.0 |
+| 2017-03-01 |             8.2 |        29.1 |           1.7 |
+| 2017-04-01 |            18.3 |        29.7 |           3.9 |
+| 2017-05-01 |            20.1 |          NA |          10.1 |
+| 2017-06-01 |            26.3 |        31.3 |          12.9 |
+| 2017-07-01 |            28.7 |          NA |          16.3 |
+| 2017-08-01 |            27.2 |        32.0 |          19.6 |
+| 2017-09-01 |            25.4 |        31.7 |          14.2 |
+| 2017-10-01 |            21.8 |        30.3 |           8.3 |
+| 2017-11-01 |            12.3 |        28.4 |           1.4 |
+| 2017-12-01 |             4.5 |        26.5 |           2.2 |

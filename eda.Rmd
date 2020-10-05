@@ -116,3 +116,48 @@ weather_df %>%
 
 ```
 
+## General Summaries
+
+```{r}
+weather_df %>%
+  group_by(month) %>%
+  summarize(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    mean_prec = mean(prcp, na.rm = TRUE),
+    median_tmin = median(tmin, na.rm = TRUE),
+    sd_tmax = sd(tmax))
+```
+
+Group by more than 1 variable and you can add plots too! 
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(mean_tmax = mean(tmax, na.rm = TRUE)) %>%
+  ggplot(aes(x = month, y = mean_tmax, color = name)) +
+  geom_point() + 
+  geom_line()
+```
+
+Suppose you want to summarize many columns in the same way
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(across(tmin:prcp, mean))
+```
+
+Remember: sometimes your data are easier to read in another format
+
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(mean_tmax = mean(tmax)) %>% 
+  pivot_wider(
+    names_from = name, 
+    values_from = mean_tmax
+  )  %>% 
+  knitr::kable(digits = 1)
+
+```
+
